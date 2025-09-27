@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Mã Affine</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input, button { margin: 5px; }
+        #output { margin-top: 10px; color: green; }
+    </style>
+</head>
+<body>
+    <h2>Mã Affine (Khóa cố định: a=5, b=8)</h2>
+    <input type="text" id="text" placeholder="Nhập văn bản">
+    <button onclick="encrypt()">Mã hóa</button>
+    <button onclick="decrypt()">Giải mã</button>
+    <div id="output"></div>
+
+    <script>
+        function modInverse(a, m) {
+            for (let x = 1; x < m; x++) {
+                if ((a * x) % m === 1) return x;
+            }
+            return -1;
+        }
+
+        function affineShift(text, encrypt = true) {
+            const a = 5, b = 8;
+            const a_inv = modInverse(a, 26);
+            let result = "";
+            for (let i = 0; i < text.length; i++) {
+                let c = text.charCodeAt(i);
+                if (c >= 65 && c <= 90) {
+                    if (encrypt) {
+                        result += String.fromCharCode(((a * (c - 65) + b) % 26) + 65);
+                    } else {
+                        result += String.fromCharCode((a_inv * ((c - 65 - b + 26) % 26)) % 26 + 65);
+                    }
+                } else if (c >= 97 && c <= 122) {
+                    if (encrypt) {
+                        result += String.fromCharCode(((a * (c - 97) + b) % 26) + 97);
+                    } else {
+                        result += String.fromCharCode((a_inv * ((c - 97 - b + 26) % 26)) % 26 + 97);
+                    }
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
+
+        function encrypt() {
+            let text = document.getElementById("text").value;
+            document.getElementById("output").innerText = "Mã hóa: " + affineShift(text, true);
+        }
+
+        function decrypt() {
+            let text = document.getElementById("text").value;
+            document.getElementById("output").innerText = "Giải mã: " + affineShift(text, false);
+        }
+    </script>
+</body>
+</html>

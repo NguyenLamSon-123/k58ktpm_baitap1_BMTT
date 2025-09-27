@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Mã Hoán vị</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input, button { margin: 5px; }
+        #output { margin-top: 10px; color: green; }
+    </style>
+</head>
+<body>
+    <h2>Mã Hoán vị (Khóa cố định: 3,1,4,2)</h2>
+    <input type="text" id="text" placeholder="Nhập văn bản">
+    <button onclick="encrypt()">Mã hóa</button>
+    <button onclick="decrypt()">Giải mã</button>
+    <div id="output"></div>
+
+    <script>
+        function transposition(text, encrypt = true) {
+            let keyStr = "3,1,4,2";
+            let key = keyStr.split(',').map(Number);
+            let cols = key.length;
+            let rows = Math.ceil(text.length / cols);
+            let padded = text.padEnd(rows * cols, 'Z');
+            let order = key.map((val, idx) => ({val, idx})).sort((a,b) => a.val - b.val);
+            let result = '';
+            if (encrypt) {
+                for (let p of order) {
+                    let col = p.idx;
+                    for (let r = 0; r < rows; r++) {
+                        result += padded[r * cols + col];
+                    }
+                }
+            } else {
+                let grid = new Array(rows * cols).fill(' ');
+                let idx = 0;
+                for (let p of order) {
+                    let col = p.idx;
+                    for (let r = 0; r < rows; r++) {
+                        grid[r * cols + col] = text[idx++];
+                    }
+                }
+                result = grid.join('').replace(/Z/g, '');
+            }
+            return result;
+        }
+
+        function encrypt() {
+            let text = document.getElementById("text").value;
+            document.getElementById("output").innerText = "Mã hóa: " + transposition(text, true);
+        }
+
+        function decrypt() {
+            let text = document.getElementById("text").value;
+            document.getElementById("output").innerText = "Giải mã: " + transposition(text, false);
+        }
+    </script>
+</body>
+</html>

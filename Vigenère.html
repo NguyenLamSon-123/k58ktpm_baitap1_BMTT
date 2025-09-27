@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Mã Vigenère</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input, button { margin: 5px; }
+        #output { margin-top: 10px; color: green; }
+    </style>
+</head>
+<body>
+    <h2>Mã Vigenère (Khóa cố định: KEY)</h2>
+    <input type="text" id="text" placeholder="Nhập văn bản">
+    <button onclick="encrypt()">Mã hóa</button>
+    <button onclick="decrypt()">Giải mã</button>
+    <div id="output"></div>
+
+    <script>
+        function vigenere(text, encrypt = true) {
+            const key = "KEY";
+            let result = "";
+            let keyLen = key.length;
+            let j = 0;
+            for (let i = 0; i < text.length; i++) {
+                let c = text.charCodeAt(i);
+                if (c >= 65 && c <= 90) {
+                    let k = key.toUpperCase().charCodeAt(j % keyLen) - 65;
+                    let shift = encrypt ? k : -k;
+                    result += String.fromCharCode((c - 65 + shift + 26) % 26 + 65);
+                    j++;
+                } else if (c >= 97 && c <= 122) {
+                    let k = key.toLowerCase().charCodeAt(j % keyLen) - 97;
+                    let shift = encrypt ? k : -k;
+                    result += String.fromCharCode((c - 97 + shift + 26) % 26 + 97);
+                    j++;
+                } else {
+                    result += text[i];
+                }
+            }
+            return result;
+        }
+
+        function encrypt() {
+            let text = document.getElementById("text").value;
+            document.getElementById("output").innerText = "Mã hóa: " + vigenere(text, true);
+        }
+
+        function decrypt() {
+            let text = document.getElementById("text").value;
+            document.getElementById("output").innerText = "Giải mã: " + vigenere(text, false);
+        }
+    </script>
+</body>
+</html>
